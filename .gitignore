@@ -151,3 +151,5 @@ crashlytics-build.properties
 fabric.properties
 
 plant-diseases-project/dataset/
+plant-diseases-project/test_images/
+plant-diseases-project/plant_disease_model_1.pt

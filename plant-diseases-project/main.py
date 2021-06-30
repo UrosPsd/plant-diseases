@@ -1,3 +1,7 @@
+import os
+from PIL import Image
+import torchvision.transforms.functional as TF
+
 # General
 import numpy as np
 import pandas as pd
@@ -5,7 +9,7 @@ import matplotlib.pyplot as plt
 
 # Torch
 import torch
-from torchvision import datasets, transforms
+from torchvision import datasets, transforms, models
 from torch.utils.data.sampler import SubsetRandomSampler
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,31 +17,40 @@ from datetime import datetime
 
 from CNN import CNN
 
+# Import Dataset
+transform = transforms.Compose(
+    [transforms.Resize(255), transforms.CenterCrop(224), transforms.ToTensor()]
+)
+dataset = datasets.ImageFolder("Dataset", transform=transform)
 
-transform = transforms.Compose([transforms.Resize(255), transforms.CenterCrop(224), transforms.ToTensor()])
+# Load Model
+targets_size = 39
+model = CNN(targets_size)
+model.load_state_dict(torch.load("plant_disease_model_1.pt"))
+model.eval()
 
-dataset = datasets.ImageFolder("dataset", transform=transform)
+data = pd.read_csv("disease_info.csv", encoding="cp1252")
 
-indices = list(range(len(dataset)))
-split = int(np.floor(0.85 * len(dataset)))  # train_size
-validation = int(np.floor(0.70 * split))  # validation
-
-np.random.shuffle(indices)
-
-train_indices, validation_indices, test_indices = (
-    indices[:validation],
-    indices[validation:split],
-    indices[split:],
+transform_index_to_disease = dataset.class_to_idx
+transform_index_to_disease = dict(
+    [(value, key) for key, value in transform_index_to_disease.items()]
 )
 
-train_sampler = SubsetRandomSampler(train_indices)
-validation_sampler = SubsetRandomSampler(validation_indices)
-test_sampler = SubsetRandomSampler(test_indices)
 
-targets_size = len(dataset.class_to_idx)
+def prediction(image_path):
+    image = Image.open(image_path)
+    image = image.resize((224, 224))
+    input_data = TF.to_tensor(image)
+    input_data = input_data.view((-1, 3, 224, 224))
+    output = model(input_data)
+    output = output.detach().numpy()
+    index = np.argmax(output)
+    print("Original : ", image_path[12:-4])
+    pred_csv = data["disease_name"][index]
+    print(pred_csv)
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = CNN(targets_size)
+if __name__ == '__main__':
+    img_path = "test_images/Apple_ceder_apple_rust.JPG"
+    prediction(img_path)
 
-model.to(device)
