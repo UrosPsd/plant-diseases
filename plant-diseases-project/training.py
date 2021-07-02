@@ -16,9 +16,9 @@ from torchsummary import summary
 from CNN import CNN
 
 
-def batch_gd(model, criterion, train_loader, test_laoder, epochs):
+def batch_gd(model, criterion, train_loader, validation_loader, epochs):
     train_losses = np.zeros(epochs)
-    test_losses = np.zeros(epochs)
+    validation_losses = np.zeros(epochs)
 
     for e in range(epochs):
         t0 = datetime.now()
@@ -96,6 +96,7 @@ if __name__ == '__main__':
     targets_size = len(dataset.class_to_idx)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(device)
     model = CNN(targets_size)
     model.to(device)
 

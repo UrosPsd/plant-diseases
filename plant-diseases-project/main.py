@@ -26,7 +26,7 @@ dataset = datasets.ImageFolder("Dataset", transform=transform)
 # Load Model
 targets_size = 39
 model = CNN(targets_size)
-model.load_state_dict(torch.load("plant_disease_model_1.pt"))
+model.load_state_dict(torch.load("plant_disease_model_1_latest.pt", map_location=torch.device('cpu')))
 model.eval()
 
 data = pd.read_csv("disease_info.csv", encoding="cp1252")
@@ -51,6 +51,6 @@ def prediction(image_path):
 
 
 if __name__ == '__main__':
-    img_path = "test_images/Apple_ceder_apple_rust.JPG"
+    img_path = "test_images/tomato_mosaic_virus.JPG"
     prediction(img_path)
 
