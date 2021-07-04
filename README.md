@@ -28,3 +28,7 @@ Glavni parametar za merenje performansi će biti predstavljen kroz procenat tač
 - Validacioni skup: 25%
 
 - Test skup: 15%
+
+## **Pokretanje aplikacije:**
+Pre pokretanja aplikacije neophodno je preuzeti istrenirani model sa [linka](https://wetransfer.com/downloads/75bbd90e8159869715c543a69d038e2b20210704153021/f5d06e) i sačuvati ga u plant-diseases-project folder. Zatim je potrebno importovati sve navedene biblioteke na početku koda.
+Prilikom pokretanja aplikacije je potrebno uneti naziv slike za testiranje u main funkciji main.py file-a a zatim pokrenuti isti taj file.
