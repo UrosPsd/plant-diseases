@@ -65,6 +65,19 @@ def batch_gd(model, criterion, train_loader, validation_loader, epochs):
     return train_losses, validation_losses
 
 
+def accuracy(loader):
+    n_correct = 0
+    n_total = 0
+    for inputs, targets in loader:
+        inputs, targets = inputs.to(device), targets.to(device)
+        outputs = model(inputs)
+        _, predictions = torch.max(outputs, 1)
+        n_correct += (predictions == targets).sum().item()
+        n_total += targets.shape[0]
+    acc = n_correct / n_total
+    return acc
+
+
 if __name__ == '__main__':
     transform = transforms.Compose(
         [transforms.Resize(255), transforms.CenterCrop(224), transforms.ToTensor()]
@@ -113,6 +126,15 @@ if __name__ == '__main__':
     validation_loader = torch.utils.data.DataLoader(
         dataset, batch_size=batch_size, sampler=validation_sampler
     )
+
+    train_acc = accuracy(train_loader)
+    test_acc = accuracy(test_loader)
+    validation_acc = accuracy(validation_loader)
+    print()
+    print(f"Train accuracy:\t\t{train_acc}")
+    print(f"Test accuracy:\t{test_acc}")
+    print(f"Validation accuracy:\t\t{validation_acc}")
+
 
     train_losses, validation_losses = batch_gd(
         model, criterion, train_loader, validation_loader, 5
